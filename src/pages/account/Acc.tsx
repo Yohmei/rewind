@@ -28,9 +28,10 @@ const Acc = () => {
   const get_user = async () => {
     const res: { data: { success: boolean; user_name: string } } = await axios.get('/api/user')
 
+    if (res.data.success === true) set_fetched_user(true)
+
     if (res.data.user_name !== '') {
       set_is_name_registered(true)
-      set_fetched_user(true)
       set_name(res.data.user_name)
     }
   }
@@ -63,10 +64,12 @@ const Acc = () => {
   }, [token, time_to_destroy, ready_to_destroy])
 
   useEffect(() => {
+    let typed
+
     if (is_name_registered && name && typed_el.current) {
       const sentence = `Hmmmmm... Hey ${name}!`
 
-      new Typed(typed_el.current, {
+      typed = new Typed(typed_el.current, {
         strings: [
           sentence,
           'You used your exclusive privilegies way too long dear Homo Sapien.',
@@ -81,6 +84,8 @@ const Acc = () => {
         },
       })
     }
+
+    return () => (typed = undefined)
   }, [is_name_registered, name])
 
   return (
